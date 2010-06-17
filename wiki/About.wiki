@@ -7,7 +7,7 @@ Gs-stream-proxy is just a set of classes, and next to that it also builds to an 
 
 = Details =
 
-Usecase: client want to write a relatively large object to a regular outputstream (that can be wrapped) to a remote location offered by remoting through GigaSpaces.
+Usecase: client want to write a relatively large object to a regular outputstream (that can be wrapped) to a remote location offered by remoting through gigaspaces.
 
 The concept works as follows:
 

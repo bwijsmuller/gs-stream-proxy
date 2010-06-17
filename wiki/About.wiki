@@ -1,0 +1,24 @@
+#labels Featured
+About
+
+= Introduction =
+
+Gs-stream-proxy is just a set of classes, and next to that it also builds to an example application that demonstrates the streaming concept.
+
+= Details =
+
+Usecase: client want to write a relatively large object to a regular outputstream (that can be wrapped) to a remote location offered by remoting through GigaSpaces.
+
+The concept works as follows:
+
+ * The server (any node on a cluster) offers an RMI service having an arbitrary method
+ * The client calls the remote method
+ * In this method the server creates an outputstream and passes it to a stream proxy factory.
+ * The factory returns a proxy object to pass to the client.
+ * The service method returns the proxy.
+ * The client can create an (local) outputstream using the proxy.
+ * When the client writes to the outputstream, it in turn writes to a remote space.
+ * All writes to the remote space are picked up asynchronously and the data is written to the serverside outputstream.
+ * When the client closes the inputstream, the stream passes the message and on the server the stream is closed also.
+
+Right now, reading from a remote location stream is not implemented yet. This would not work in exactly the same way.

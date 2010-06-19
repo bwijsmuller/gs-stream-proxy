@@ -1,5 +1,5 @@
+#summary About gs-stream-proxy, what is it?
 #labels Featured
-#summart About gs-stream-proxy, what is it?
 
 = Introduction =
 

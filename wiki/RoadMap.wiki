@@ -8,14 +8,14 @@ The road map for gs-stream-proxy
 = Details =
 
 == Version 0.1 (Current version) ==
- * BufferedOuputStream working concept
- * demo client server application that transfers file on commandline
+ * {{{BufferedOuputStream}}} working concept
+ * demo client server application that transfers file on command line
 
 == Version 0.2 ==
- * BufferedInputStream working concept
+ * {{{BufferedInputStream}}} working concept
 
 == Version 0.5 ==
- * Better seperation of concerns
+ * Better separation of concerns
  * More configuration options
  * More different scenarios of space configuration supported
 

@@ -1,0 +1,23 @@
+#summary The road map for the project
+#labels Featured,Phase-Requirements
+
+= Introduction =
+The road map for gs-stream-proxy
+
+
+= Details =
+
+== Version 0.1 (Current version) ==
+ * BufferedOuputStream working concept
+ * demo client server application that transfers file on commandline
+
+== Version 0.2 ==
+ * BufferedInputStream working concept
+
+== Version 0.5 ==
+ * Better seperation of concerns
+ * More configuration options
+ * More different scenarios of space configuration supported
+
+== Version 1.0 ==
+ * Optimized streaming

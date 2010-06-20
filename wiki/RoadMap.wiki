@@ -7,11 +7,11 @@ The road map for gs-stream-proxy
 
 = Details =
 
-== Version 0.1 (Current version) ==
+== Version 0.1 (Done) ==
  * {{{BufferedOuputStream}}} working concept
  * demo client server application that transfers file on command line
 
-== Version 0.2 ==
+== Version 0.2 (Current version) ==
  * {{{BufferedInputStream}}} working concept
 
 == Version 0.5 ==

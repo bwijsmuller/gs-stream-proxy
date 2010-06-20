@@ -12,6 +12,10 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
+import nl.wijsmullerbros.gs.ChunkHolder;
+import nl.wijsmullerbros.gs.StreamProxy;
+import nl.wijsmullerbros.gs.outputstream.RemotingOutputStream;
+
 import org.example.RemoteService;
 import org.junit.After;
 import org.junit.Before;
@@ -73,7 +77,7 @@ public class RemoteStreamRemotingTest {
         contextB.registerShutdownHook();
         
         RemoteService service = contextB.getBean(RemoteService.class);
-        StreamProxy streamProxy = service.createStreamProxy();
+        StreamProxy streamProxy = service.createOutputStreamProxy();
         RemotingOutputStream outputStream = streamProxy.createRemotingOutputStream();
         
         inputStream = new BufferedInputStream(inputFile.getInputStream());

@@ -15,6 +15,8 @@ public class CommandLineTest {
     @Test
     @Ignore
     public void test() throws IOException {
+        System.setProperty("REMOTE_HOST", "localhost");
+        
         CommandLine commandLine = new CommandLine();
         commandLine.main(new String[]{""});
     }

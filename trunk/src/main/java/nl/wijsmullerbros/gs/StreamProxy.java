@@ -1,7 +1,10 @@
-package nl.wijsmullerbros;
+package nl.wijsmullerbros.gs;
 
 import java.io.Serializable;
 import java.util.UUID;
+
+import nl.wijsmullerbros.gs.inputstream.RemotingInputStream;
+import nl.wijsmullerbros.gs.outputstream.RemotingOutputStream;
 
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
@@ -38,6 +41,16 @@ public class StreamProxy implements Serializable {
         IJSpace space = new UrlSpaceConfigurer(remoteSpaceUri).space();
         GigaSpace gigaSpace = new GigaSpaceConfigurer(space).gigaSpace();
         return new RemotingOutputStream(channelId, gigaSpace);
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public RemotingInputStream createRemotingInputStream() {
+        IJSpace space = new UrlSpaceConfigurer(remoteSpaceUri).space();
+        GigaSpace gigaSpace = new GigaSpaceConfigurer(space).gigaSpace();
+        return new RemotingInputStream(channelId, gigaSpace);
     }
 
 }

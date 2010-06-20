@@ -1,6 +1,6 @@
 package org.example;
 
-import nl.wijsmullerbros.StreamProxy;
+import nl.wijsmullerbros.gs.StreamProxy;
 
 /**
  * @author bwijsmuller
@@ -8,6 +8,8 @@ import nl.wijsmullerbros.StreamProxy;
  */
 public interface RemoteService {
 
-    StreamProxy createStreamProxy();
+    StreamProxy createOutputStreamProxy();
+
+    StreamProxy createInputStreamProxy(String filePath);
     
 }

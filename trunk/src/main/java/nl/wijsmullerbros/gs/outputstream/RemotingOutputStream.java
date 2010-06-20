@@ -1,8 +1,10 @@
-package nl.wijsmullerbros;
+package nl.wijsmullerbros.gs.outputstream;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.UUID;
+
+import nl.wijsmullerbros.gs.ChunkHolder;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.openspaces.core.GigaSpace;
@@ -15,8 +17,8 @@ public class RemotingOutputStream extends BufferedOutputStream {
 
     private final UUID channelId;
     private final GigaSpace space;
-    private int counter = 0;
-    private int byteCounter = 0;
+    private long counter = 0;
+    private long byteCounter = 0;
 
     /**
      * Creates a new {@code RemotingOutputStream}.

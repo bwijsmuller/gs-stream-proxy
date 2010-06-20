@@ -5,12 +5,16 @@ import java.io.BufferedReader;
 import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 
-import nl.wijsmullerbros.RemotingOutputStream;
-import nl.wijsmullerbros.StreamProxy;
+import nl.wijsmullerbros.gs.StreamProxy;
+import nl.wijsmullerbros.gs.inputstream.RemotingInputStream;
+import nl.wijsmullerbros.gs.outputstream.RemotingOutputStream;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.FileCopyUtils;
@@ -28,13 +32,15 @@ public class CommandLine {
         System.out.println("NIC_ADDR: "+System.getenv("NIC_ADDR"));
         
         BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Choose client or server (c/s): ");
+        System.out.println("Choose sending client, reading client or server (c/r/s): ");
         String choice = console.readLine();
         CommandLine commandLine = new CommandLine();
         if ("c".equals(choice)) {
-            commandLine.startClient(console);
-        } else {
+            commandLine.startWritingClient(console);
+        } else if("s".equals(choice)) {
             commandLine.startServer(console);
+        } else if ("r".equals(choice)) {
+            commandLine.startReadingClient(console);
         }
     }
 
@@ -45,13 +51,13 @@ public class CommandLine {
         console.readLine();
     }
 
-    private void startClient(BufferedReader console) throws IOException {
+    private void startWritingClient(BufferedReader console) throws IOException {
         ClassPathXmlApplicationContext contextB = new ClassPathXmlApplicationContext("classpath:context-b.xml");
         contextB.registerShutdownHook();
         
         RemoteService service = contextB.getBean(RemoteService.class);
-        StreamProxy streamProxy = service.createStreamProxy();
-        RemotingOutputStream outputStream = streamProxy.createRemotingOutputStream();
+        StreamProxy streamProxy = service.createOutputStreamProxy();
+        OutputStream outputStream = streamProxy.createRemotingOutputStream();
         
         System.out.println("Type file name to send: ");
         String fileName = console.readLine();
@@ -60,6 +66,29 @@ public class CommandLine {
         FileCopyUtils.copy(inputStream, outputStream);
         
         System.out.println("sent file.");
+    }
+    
+    private void startReadingClient(BufferedReader console) throws IOException {
+        ClassPathXmlApplicationContext contextB = new ClassPathXmlApplicationContext("classpath:context-b.xml");
+        contextB.registerShutdownHook();
+        
+        System.out.println("Type file name to read (on server): ");
+        String fileName = console.readLine();
+        
+        RemoteService service = contextB.getBean(RemoteService.class);
+        StreamProxy streamProxy = service.createInputStreamProxy(fileName);
+        InputStream inputStream = streamProxy.createRemotingInputStream();
+        
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = new FileOutputStream("/tmp/streamOuputTest.dat");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        
+        FileCopyUtils.copy(inputStream, fileOutputStream);
+        
+        System.out.println("Read file.");
     }
 
 }

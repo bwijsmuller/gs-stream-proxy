@@ -1,4 +1,4 @@
-package nl.wijsmullerbros;
+package nl.wijsmullerbros.gs;
 
 import java.io.Serializable;
 
@@ -17,10 +17,11 @@ public class ChunkHolder implements Serializable {
     
     private static final String SPLIT_CHAR = "#";
     private byte[] dataChunk;
-    private Integer chunkId;
+    private Long chunkId;
     private String channelId;
     private String concattedChunkId;
     private Boolean closingChunk;
+    private Boolean fillBufferChunk;
 
     /**
      * Creates a new {@code ChunkHolder}.
@@ -57,7 +58,7 @@ public class ChunkHolder implements Serializable {
      * Sets the chunkId
      * @param chunkId the chunkId to set
      */
-    public void setChunkId(Integer chunkId) {
+    public void setChunkId(Long chunkId) {
         this.chunkId = chunkId;
         concatenate();
     }
@@ -66,7 +67,7 @@ public class ChunkHolder implements Serializable {
      * 
      * @return
      */
-    public Integer getChunkId() {
+    public Long getChunkId() {
         return this.chunkId;
     }
     
@@ -122,10 +123,26 @@ public class ChunkHolder implements Serializable {
 
     //================== helpers ======================//
     
+    /**
+     * Sets the fillBufferChunk
+     * @param fillBufferChunk the fillBufferChunk to set
+     */
+    public void setFillBufferChunk(Boolean fillBufferChunk) {
+        this.fillBufferChunk = fillBufferChunk;
+    }
+
+    /**
+     * Gets the fillBufferChunk
+     * @return Boolean the fillBufferChunk
+     */
+    public Boolean getFillBufferChunk() {
+        return fillBufferChunk;
+    }
+
     private void splitConcat(String concattedChunkId) {
         String[] split = concattedChunkId.split(SPLIT_CHAR);
         this.channelId = split[0];
-        this.chunkId = Integer.valueOf(split[1]);
+        this.chunkId = Long.valueOf(split[1]);
     }
     
     private void concatenate() {
@@ -133,5 +150,5 @@ public class ChunkHolder implements Serializable {
             this.concattedChunkId = channelId+SPLIT_CHAR+chunkId;
         }
     }
-    
+
 }

@@ -2,7 +2,6 @@ package org.example;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,8 +12,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import nl.wijsmullerbros.gs.StreamProxy;
-import nl.wijsmullerbros.gs.inputstream.RemotingInputStream;
-import nl.wijsmullerbros.gs.outputstream.RemotingOutputStream;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.FileCopyUtils;

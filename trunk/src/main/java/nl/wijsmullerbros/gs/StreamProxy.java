@@ -6,11 +6,7 @@ import java.util.UUID;
 import nl.wijsmullerbros.gs.inputstream.RemotingInputStream;
 import nl.wijsmullerbros.gs.outputstream.RemotingOutputStream;
 
-import org.openspaces.core.GigaSpace;
-import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.UrlSpaceConfigurer;
-
-import com.j_spaces.core.IJSpace;
 
 /**
  * @author bwijsmuller
@@ -38,9 +34,8 @@ public class StreamProxy implements Serializable {
      * @return
      */
     public RemotingOutputStream createRemotingOutputStream() {
-        IJSpace space = new UrlSpaceConfigurer(remoteSpaceUri).space();
-        GigaSpace gigaSpace = new GigaSpaceConfigurer(space).gigaSpace();
-        return new RemotingOutputStream(channelId, gigaSpace);
+        UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer(remoteSpaceUri);
+        return new RemotingOutputStream(channelId, urlSpaceConfigurer);
     }
     
     /**
@@ -48,9 +43,8 @@ public class StreamProxy implements Serializable {
      * @return
      */
     public RemotingInputStream createRemotingInputStream() {
-        IJSpace space = new UrlSpaceConfigurer(remoteSpaceUri).space();
-        GigaSpace gigaSpace = new GigaSpaceConfigurer(space).gigaSpace();
-        return new RemotingInputStream(channelId, gigaSpace);
+        UrlSpaceConfigurer urlSpaceConfigurer = new UrlSpaceConfigurer(remoteSpaceUri);
+        return new RemotingInputStream(channelId, urlSpaceConfigurer);
     }
 
 }

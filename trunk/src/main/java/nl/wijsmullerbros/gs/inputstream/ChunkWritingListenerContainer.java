@@ -62,7 +62,7 @@ public class ChunkWritingListenerContainer {
             @Override
             public void onEvent(ChunkHolder data, GigaSpace gigaSpace, TransactionStatus txStatus, Object source) {
                 System.out.println("Recieved fill buffer ("+CHUNKS_TO_BUFFER+") event chunk: "+data.getConcattedChunkId());
-                if (data.getClosingChunk()) {
+                if (Boolean.TRUE.equals(data.getClosingChunk())) {
                     System.out.println("Recieved closing chunk, cleaning up space and listener.");
                     cleanup(gigaSpace);
                     return;

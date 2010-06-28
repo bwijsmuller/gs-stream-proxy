@@ -18,8 +18,10 @@ import org.springframework.transaction.TransactionStatus;
 import com.j_spaces.core.client.SQLQuery;
 
 /**
+ * Listener container that reads chunks from the space,
+ * and writes them to an arbitrary outputstream.
+ * 
  * @author bwijsmuller
- *
  */
 public class ChunkReadingListenerContainer {
 

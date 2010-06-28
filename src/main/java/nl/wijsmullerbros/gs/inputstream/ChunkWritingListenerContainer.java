@@ -1,18 +1,15 @@
-/*
- * Copyright (c) Qiy Intellectual Property B.V. and licensors, 2007-2010. All rights reserved.
- */
 package nl.wijsmullerbros.gs.inputstream;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.UUID;
 
 import nl.wijsmullerbros.gs.ChunkHolder;
 
 import org.apache.commons.io.IOUtils;
 import org.openspaces.core.GigaSpace;
+import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.UrlSpaceConfigurer;
 import org.openspaces.events.SpaceDataEventListener;
 import org.openspaces.events.notify.SimpleNotifyContainerConfigurer;
@@ -28,20 +25,27 @@ import com.j_spaces.core.client.SQLQuery;
 public class ChunkWritingListenerContainer {
 
     private static final int READ_BUFFERSIZE = 1024;
+    
+    /**
+     * Number of chunks to write into space when client asks
+     * for buffer fill
+     */
     protected static final int CHUNKS_TO_BUFFER = 10;
 
     private UUID channelId;
     private SimpleNotifyEventListenerContainer listenerContainer;
     private final GigaSpace gigaSpace;
     private BufferedInputStream inputStream;
+    private final UrlSpaceConfigurer configurer;
 
     /**
      * Creates a new {@code ChunkWritingListenerContainer}.
-     * @param gigaSpace
+     * @param configurer
      * @param channelId
      */
-    public ChunkWritingListenerContainer(GigaSpace gigaSpace, UUID channelId) {
-        this.gigaSpace = gigaSpace;
+    public ChunkWritingListenerContainer(UrlSpaceConfigurer configurer, UUID channelId) {
+        this.configurer = configurer;
+        this.gigaSpace = new GigaSpaceConfigurer(configurer).gigaSpace();
         this.channelId = channelId;
     }
 
@@ -57,7 +61,13 @@ public class ChunkWritingListenerContainer {
             long counter = 0;
             @Override
             public void onEvent(ChunkHolder data, GigaSpace gigaSpace, TransactionStatus txStatus, Object source) {
-                System.out.println("Received fill buffer ("+CHUNKS_TO_BUFFER+") event chunk: "+data.getConcattedChunkId());
+                System.out.println("Recieved fill buffer ("+CHUNKS_TO_BUFFER+") event chunk: "+data.getConcattedChunkId());
+                if (data.getClosingChunk()) {
+                    System.out.println("Recieved closing chunk, cleaning up space and listener.");
+                    cleanup(gigaSpace);
+                    return;
+                }
+                
                 try {
                     byte[] buffer = new byte[READ_BUFFERSIZE];
                     for (int i = 0; i < CHUNKS_TO_BUFFER; i++) {
@@ -98,9 +108,18 @@ public class ChunkWritingListenerContainer {
             
             private void cleanup(GigaSpace gigaSpace) {
                 System.out.println("Found closing chunk, server stream will close...");
-                
-                ChunkWritingListenerContainer.this.listenerContainer.destroy();
-                System.out.println("Destroyed listener container...");
+                try {
+                    ChunkWritingListenerContainer.this.listenerContainer.destroy();
+                } finally {
+                    try {
+                        configurer.destroy();
+                        System.out.println("Destroyed space...");
+                    } catch (Exception e) {
+                        System.err.println("Cannot destroy space...");
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("Destroyed space and listener container...");
             }
         };
         
@@ -116,5 +135,12 @@ public class ChunkWritingListenerContainer {
      */
     public void setInputStream(InputStream inputStream) {
         this.inputStream = new BufferedInputStream(inputStream);
+    }
+
+    /**
+     * @return
+     */
+    public GigaSpace getSpace() {
+        return gigaSpace;
     }
 }

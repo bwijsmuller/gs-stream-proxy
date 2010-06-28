@@ -8,6 +8,7 @@ import nl.wijsmullerbros.gs.ChunkHolder;
 
 import org.apache.commons.io.IOUtils;
 import org.openspaces.core.GigaSpace;
+import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.UrlSpaceConfigurer;
 import org.openspaces.events.SpaceDataEventListener;
 import org.openspaces.events.notify.SimpleNotifyContainerConfigurer;
@@ -26,14 +27,16 @@ public class ChunkReadingListenerContainer {
     private SimpleNotifyEventListenerContainer listenerContainer;
     private final GigaSpace gigaSpace;
     private OutputStream outputStream;
+    private final UrlSpaceConfigurer configurer;
 
     /**
      * Creates a new {@code ChunkReadingListenerContainer}.
-     * @param gigaSpace
+     * @param configurer
      * @param channelId
      */
-    public ChunkReadingListenerContainer(GigaSpace gigaSpace, UUID channelId) {
-        this.gigaSpace = gigaSpace;
+    public ChunkReadingListenerContainer(UrlSpaceConfigurer configurer, UUID channelId) {
+        this.configurer = configurer;
+        this.gigaSpace = new GigaSpaceConfigurer(configurer).gigaSpace();
         this.channelId = channelId;
     }
 
@@ -51,34 +54,38 @@ public class ChunkReadingListenerContainer {
                 System.out.println("Received chunk: "+data.getConcattedChunkId());
                 try {
                     if (Boolean.TRUE.equals(data.getClosingChunk())) {
-                        try {
-                            System.out.println("Found closing chunk, server stream will close...");
-                            //close stream
-                            IOUtils.closeQuietly(outputStream);
-                            //destroy listener
-                            ChunkReadingListenerContainer.this.listenerContainer.destroy();
-                            System.out.println("Destroyed listener container...");
-                        } finally {
-                            try {
-                                new UrlSpaceConfigurer(gigaSpace.getSpace().getURL().getURL()).destroy();
-                                System.out.println("Destroyed space...");
-                            } catch (Exception e) {
-                                System.err.println("Cannot destroy space...");
-                                e.printStackTrace();
-                            }
-                        }
-                    } else {
-                        //if event data is not the next chunk, log error
-                        if (data.getChunkId() > counter +1) {
-                            System.err.println("Rewriting chunk out of order: "+data.getChunkId());
-                        } else {
-                            outputStream.write(data.getDataChunk());
-                            counter++;
-                        }
-                        System.out.println("Expecting next chunk: "+counter);
+                        cleanup();
+                        return;
                     }
+                    //if event data is not the next chunk, log error
+                    if (data.getChunkId() > counter +1) {
+                        System.err.println("Rewriting chunk out of order: "+data.getChunkId());
+                    } else {
+                        outputStream.write(data.getDataChunk());
+                        counter++;
+                    }
+                    System.out.println("Expecting next chunk: "+counter);                    
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+            }
+            
+            private void cleanup() {
+                try {
+                    System.out.println("Found closing chunk, server stream will close...");
+                    //close stream
+                    IOUtils.closeQuietly(outputStream);
+                    //destroy listener
+                    ChunkReadingListenerContainer.this.listenerContainer.destroy();
+                    System.out.println("Destroyed listener container...");
+                } finally {
+                    try {
+                        configurer.destroy();
+                        System.out.println("Destroyed space...");
+                    } catch (Exception e) {
+                        System.err.println("Cannot destroy space...");
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -97,6 +104,13 @@ public class ChunkReadingListenerContainer {
     public void setOutputStream(OutputStream outputStream) {
         this.outputStream = outputStream;
         
+    }
+
+    /**
+     * @return
+     */
+    public GigaSpace getSpace() {
+        return gigaSpace;
     }
 
 }

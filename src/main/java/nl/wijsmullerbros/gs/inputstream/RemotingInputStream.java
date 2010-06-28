@@ -1,6 +1,3 @@
-/*
- * Copyright (c) Qiy Intellectual Property B.V. and licensors, 2007-2010. All rights reserved.
- */
 package nl.wijsmullerbros.gs.inputstream;
 
 import java.io.BufferedInputStream;
@@ -11,7 +8,10 @@ import nl.wijsmullerbros.gs.ChunkHolder;
 
 import org.apache.commons.io.input.NullInputStream;
 import org.openspaces.core.GigaSpace;
+import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.UrlSpaceConfigurer;
+
+import com.j_spaces.core.IJSpace;
 
 /**
  * @author bwijsmuller
@@ -22,15 +22,21 @@ public class RemotingInputStream extends BufferedInputStream {
     private final GigaSpace gigaSpace;
     private long counter;
     private final UUID channelId;
+    private final UrlSpaceConfigurer urlSpaceConfigurer;
 
     /**
      * Creates a new {@code RemotingInputStream}.
      * @param channelId 
-     * @param gigaSpace 
+     * @param urlSpaceConfigurer 
      */
-    public RemotingInputStream(UUID channelId, GigaSpace gigaSpace) {
+    public RemotingInputStream(UUID channelId, UrlSpaceConfigurer urlSpaceConfigurer) {
         super(new NullInputStream(1));
         this.channelId = channelId;
+        this.urlSpaceConfigurer = urlSpaceConfigurer;
+        
+        IJSpace space = urlSpaceConfigurer.space();
+        GigaSpace gigaSpace = new GigaSpaceConfigurer(space).gigaSpace();
+        
         this.gigaSpace = gigaSpace;
         counter = 0;
         fireFillBufferEvent();
@@ -138,6 +144,25 @@ public class RemotingInputStream extends BufferedInputStream {
             counter++;
             return data.length;
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        //send cleanup signal to server
+        ChunkHolder closeEvent = new ChunkHolder();
+        closeEvent.setFillBufferChunk(false);
+        closeEvent.setClosingChunk(true);
+        gigaSpace.write(closeEvent);
+        
+        try {
+            urlSpaceConfigurer.destroy();
+        } catch (Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
+        super.close();
     }
     
 }

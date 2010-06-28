@@ -8,6 +8,10 @@ import nl.wijsmullerbros.gs.ChunkHolder;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.openspaces.core.GigaSpace;
+import org.openspaces.core.GigaSpaceConfigurer;
+import org.openspaces.core.space.UrlSpaceConfigurer;
+
+import com.j_spaces.core.IJSpace;
 
 /**
  * @author bwijsmuller
@@ -19,18 +23,25 @@ public class RemotingOutputStream extends BufferedOutputStream {
     private final GigaSpace space;
     private long counter = 0;
     private long byteCounter = 0;
+    private final UrlSpaceConfigurer urlSpaceConfigurer;
 
     /**
      * Creates a new {@code RemotingOutputStream}.
      * @param channelId 
-     * @param space 
+     * @param urlSpaceConfigurer 
      */
-    public RemotingOutputStream(UUID channelId, GigaSpace space) {
+    public RemotingOutputStream(UUID channelId, UrlSpaceConfigurer urlSpaceConfigurer) {
         super(new NullOutputStream());
+        
         //TODO: maybe optionally offer constructor that also writes to local file (as failover backup)
         this.channelId = channelId;
-        this.space = space;
-        System.out.println("Created remoting stream for space: "+space.getSpace().getURL());
+        this.urlSpaceConfigurer = urlSpaceConfigurer;
+        
+        IJSpace space = urlSpaceConfigurer.space();
+        GigaSpace gigaSpace = new GigaSpaceConfigurer(space).gigaSpace();
+        
+        this.space = gigaSpace;
+        System.out.println("Created remoting stream for space: "+space.getURL());
         System.out.println("Channel id: "+channelId);
     }
     
@@ -76,6 +87,12 @@ public class RemotingOutputStream extends BufferedOutputStream {
         chunkHolder.setChunkId(counter);
         chunkHolder.setClosingChunk(true);
         space.write(chunkHolder, 20000);
+        
+        try {
+            urlSpaceConfigurer.destroy();
+        } catch (Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
         super.close();
     }
 

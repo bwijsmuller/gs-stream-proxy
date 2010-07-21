@@ -19,6 +19,6 @@ The concept works as follows:
  * The client can create an (local) outputstream using the proxy.
  * When the client writes to the outputstream, it in turn writes to a remote space.
  * All writes to the remote space are picked up asynchronously and the data is written to the serverside outputstream.
- * When the client closes the inputstream, the stream passes the message and on the server the stream is closed also.
+ * When the client closes the outputstream, the stream passes the message and on the server the outputstream is closed also.
 
-Right now, reading from a remote location stream is not implemented yet. This would not work in exactly the same way.
+The reverse is also implemented, using an local inputstream to read from a remote location.

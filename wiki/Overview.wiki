@@ -1,0 +1,7 @@
+#summary Graphical overview of the proxy system
+
+= Introduction =
+
+Red colored components are custom implemented for each use of the system.
+Blue colored are part of the system.
+Grey are default JDK components.

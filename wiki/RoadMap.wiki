@@ -14,7 +14,7 @@ The road map for gs-stream-proxy
 == Version 0.2 (Current version) ==
  * {{{BufferedInputStream}}} working concept
 
-== Version 0.5 == (WIP)
+== Version 0.5 (WIP) ==
  * Better separation of concerns
  * More different scenarios of space configuration supported
 

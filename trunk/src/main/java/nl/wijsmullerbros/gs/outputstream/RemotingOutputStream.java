@@ -5,20 +5,25 @@ import java.io.IOException;
 import java.util.UUID;
 
 import nl.wijsmullerbros.gs.ChunkHolder;
+import nl.wijsmullerbros.gs.inputstream.RemotingInputStream;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.UrlSpaceConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.j_spaces.core.IJSpace;
 
 /**
+ * Client side stream that can write to a server side stream by proxy
  * @author bwijsmuller
- *
  */
 public class RemotingOutputStream extends BufferedOutputStream {
 
+	Logger logger = LoggerFactory.getLogger(RemotingInputStream.class);
+	
     private final UUID channelId;
     private final GigaSpace space;
     private long counter = 0;
@@ -41,8 +46,8 @@ public class RemotingOutputStream extends BufferedOutputStream {
         GigaSpace gigaSpace = new GigaSpaceConfigurer(space).gigaSpace();
         
         this.space = gigaSpace;
-        System.out.println("Created remoting stream for space: "+space.getURL());
-        System.out.println("Channel id: "+channelId);
+        logger.info("Created remoting stream for space: {}", space.getURL());
+        logger.info("Channel id: {}", channelId);
     }
     
     /**
@@ -81,7 +86,7 @@ public class RemotingOutputStream extends BufferedOutputStream {
      */
     @Override
     public void close() throws IOException {
-        System.out.println("Written ["+byteCounter+"] total bytes to remote location, sending close event.");
+    	logger.info("Written [{}] total bytes to remote location, sending close event.", byteCounter);
         ChunkHolder chunkHolder = new ChunkHolder();
         chunkHolder.setChannelId(channelId.toString());
         chunkHolder.setChunkId(counter);

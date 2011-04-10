@@ -9,6 +9,8 @@ import nl.wijsmullerbros.gs.outputstream.ChunkReadingListenerContainer;
 
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.space.UrlSpaceConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.j_spaces.core.client.SpaceURL;
 
@@ -18,6 +20,8 @@ import com.j_spaces.core.client.SpaceURL;
  */
 public class StreamProxyFactory {
 
+	Logger logger = LoggerFactory.getLogger(StreamProxyFactory.class);
+	
     /**
      * Creates a new {@code StreamProxyFactory}.
      */
@@ -26,7 +30,7 @@ public class StreamProxyFactory {
     }
 
     /**
-     * 
+     * Create a proxy to send to the client.
      * @param inputStream 
      * @return
      */
@@ -35,7 +39,7 @@ public class StreamProxyFactory {
     }
     
     /**
-     * 
+     * Create a proxy to send to the client.
      * @param outputStream 
      * @return
      */
@@ -44,6 +48,7 @@ public class StreamProxyFactory {
     }
     
     /**
+     * Create a proxy to send to the client.
      * @param configurer 
      * @param inputStream 
      * @return
@@ -62,6 +67,7 @@ public class StreamProxyFactory {
     }
     
     /**
+     * Create a proxy to send to the client.
      * @param gigaSpace
      * @param outputStream 
      * @return
@@ -79,39 +85,27 @@ public class StreamProxyFactory {
         return createProxy(gigaSpace, channelId);
     }
     
-    /**
-     * @param channelId
-     * @return
-     */
+    //================== helper methods ======================//
+    
     private UrlSpaceConfigurer createLocalSpaceConfigurer(UUID channelId) {
         //TODO: read groups from environment through constructor
         return new UrlSpaceConfigurer("/./streamProxy"+channelId.toString()+"?groups=testGroup");
     }
 
-    /**
-     * @param configurer 
-     * @param channelId
-     * @param inputStream 
-     * @param url
-     * @return
-     */
     private StreamProxy createProxy(GigaSpace space, UUID channelId) {
         final String url = extractRemoteSpaceUrl(space);
         StreamProxy streamProxy = new StreamProxy(channelId, url);
         return streamProxy;
     }
 
-    /**
-     * @param configurer
-     * @return
-     */
     private String extractRemoteSpaceUrl(GigaSpace space) {
         final SpaceURL spaceURL = space.getSpace().getURL();
         final String spaceName = spaceURL.getSpaceName();
         final String[] lookupGroups = spaceURL.getLookupGroups();
         final String host = spaceURL.getHost();
         final String url = "jini://"+host+"/*/"+spaceName+"?groups="+lookupGroups[0];
-        System.out.println("Resolved remote url from server space: "+url);
+        
+        logger.info("Resolved remote url from server space: {}", url);
         return url;
     }
 

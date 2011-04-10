@@ -13,6 +13,8 @@ import org.openspaces.core.space.UrlSpaceConfigurer;
 import org.openspaces.events.SpaceDataEventListener;
 import org.openspaces.events.notify.SimpleNotifyContainerConfigurer;
 import org.openspaces.events.notify.SimpleNotifyEventListenerContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 
 import com.j_spaces.core.client.SQLQuery;
@@ -25,6 +27,8 @@ import com.j_spaces.core.client.SQLQuery;
  */
 public class ChunkReadingListenerContainer {
 
+	private static Logger logger = LoggerFactory.getLogger(ChunkReadingListenerContainer.class);
+	
     private UUID channelId;
     private SimpleNotifyEventListenerContainer listenerContainer;
     private final GigaSpace gigaSpace;
@@ -53,7 +57,7 @@ public class ChunkReadingListenerContainer {
             long counter = 0;
             @Override
             public void onEvent(ChunkHolder data, GigaSpace gigaSpace, TransactionStatus txStatus, Object source) {
-                System.out.println("Received chunk: "+data.getConcattedChunkId());
+                logger.info("Received chunk: {}", data.getConcattedChunkId());
                 try {
                     if (Boolean.TRUE.equals(data.getClosingChunk())) {
                         cleanup();
@@ -61,12 +65,12 @@ public class ChunkReadingListenerContainer {
                     }
                     //if event data is not the next chunk, log error
                     if (data.getChunkId() > counter +1) {
-                        System.err.println("Rewriting chunk out of order: "+data.getChunkId());
+                        logger.error("Rewriting chunk out of order: {}", data.getChunkId());
                     } else {
                         outputStream.write(data.getDataChunk());
                         counter++;
                     }
-                    System.out.println("Expecting next chunk: "+counter);                    
+                    logger.info("Expecting next chunk: {}", counter);                    
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -74,18 +78,17 @@ public class ChunkReadingListenerContainer {
             
             private void cleanup() {
                 try {
-                    System.out.println("Found closing chunk, server stream will close...");
+                	logger.info("Found closing chunk, server stream will close...");
                     //close stream
                     IOUtils.closeQuietly(outputStream);
                     //destroy listener
                     ChunkReadingListenerContainer.this.listenerContainer.destroy();
-                    System.out.println("Destroyed listener container...");
+                    logger.info("Destroyed listener container...");
                 } finally {
                     try {
                         configurer.destroy();
-                        System.out.println("Destroyed space...");
+                        logger.info("Destroyed space...");
                     } catch (Exception e) {
-                        System.err.println("Cannot destroy space...");
                         e.printStackTrace();
                     }
                 }

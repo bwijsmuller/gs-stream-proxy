@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
+ * This is an example service that offers a remote stream for clients.
  * @author bwijsmuller
- *
  */
 @Service
 public class DefaultRemoteService implements RemoteService {

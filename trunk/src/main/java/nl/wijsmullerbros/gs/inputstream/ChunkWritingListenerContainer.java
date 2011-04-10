@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 import nl.wijsmullerbros.gs.ChunkHolder;
+import nl.wijsmullerbros.gs.StreamProxyFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.openspaces.core.GigaSpace;
@@ -14,6 +15,8 @@ import org.openspaces.core.space.UrlSpaceConfigurer;
 import org.openspaces.events.SpaceDataEventListener;
 import org.openspaces.events.notify.SimpleNotifyContainerConfigurer;
 import org.openspaces.events.notify.SimpleNotifyEventListenerContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 
 import com.j_spaces.core.client.SQLQuery;
@@ -26,6 +29,8 @@ import com.j_spaces.core.client.SQLQuery;
  */
 public class ChunkWritingListenerContainer {
 
+	Logger logger = LoggerFactory.getLogger(ChunkWritingListenerContainer.class);
+	
     private static final int READ_BUFFERSIZE = 1024;
     
     /**
@@ -63,7 +68,7 @@ public class ChunkWritingListenerContainer {
             long counter = 0;
             @Override
             public void onEvent(ChunkHolder data, GigaSpace gigaSpace, TransactionStatus txStatus, Object source) {
-                System.out.println("Recieved fill buffer ("+CHUNKS_TO_BUFFER+") event chunk: "+data.getConcattedChunkId());
+                logger.info("Recieved fill buffer ("+CHUNKS_TO_BUFFER+") event chunk: "+data.getConcattedChunkId());
                 if (Boolean.TRUE.equals(data.getClosingChunk())) {
                     System.out.println("Recieved closing chunk, cleaning up space and listener.");
                     cleanup(gigaSpace);
@@ -75,7 +80,7 @@ public class ChunkWritingListenerContainer {
                     for (int i = 0; i < CHUNKS_TO_BUFFER; i++) {
                         int nrReadBytes = inputStream.read(buffer);
                         if (nrReadBytes == -1) {
-                            System.out.println("End of stream read (closing stream), sending closed message.");
+                        	logger.info("End of stream read (closing stream), sending closed message.");
                             
                             //send close message
                             ChunkHolder chunk = new ChunkHolder(buffer.clone());
@@ -98,7 +103,7 @@ public class ChunkWritingListenerContainer {
                             chunk.setChunkId(counter);
                             chunk.setFillBufferChunk(false);
                             chunk.setClosingChunk(false);
-                            System.out.println("Writing chunk to space: "+chunk.getConcattedChunkId());
+                            logger.info("Writing chunk to space: {}", chunk.getConcattedChunkId());
                             gigaSpace.write(chunk);
                         }
                         counter++;
@@ -109,19 +114,19 @@ public class ChunkWritingListenerContainer {
             }
             
             private void cleanup(GigaSpace gigaSpace) {
-                System.out.println("Found closing chunk, server stream will close...");
+            	logger.info("Found closing chunk, server stream will close...");
                 try {
                     ChunkWritingListenerContainer.this.listenerContainer.destroy();
                 } finally {
                     try {
                         configurer.destroy();
-                        System.out.println("Destroyed space...");
+                        logger.info("Destroyed space...");
                     } catch (Exception e) {
-                        System.err.println("Cannot destroy space...");
+                    	logger.error("Cannot destroy space...");
                         e.printStackTrace();
                     }
                 }
-                System.out.println("Destroyed space and listener container...");
+                logger.info("Destroyed space and listener container...");
             }
         };
         

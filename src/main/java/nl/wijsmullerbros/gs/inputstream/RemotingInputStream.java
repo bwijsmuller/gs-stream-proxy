@@ -10,15 +10,19 @@ import org.apache.commons.io.input.NullInputStream;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.UrlSpaceConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.j_spaces.core.IJSpace;
 
 /**
+ * Client side stream that can read from a serverside stream by proxy.
  * @author bwijsmuller
- *
  */
 public class RemotingInputStream extends BufferedInputStream {
 
+	Logger logger = LoggerFactory.getLogger(RemotingInputStream.class);
+	
     private final GigaSpace gigaSpace;
     private long counter;
     private final UUID channelId;
@@ -120,7 +124,7 @@ public class RemotingInputStream extends BufferedInputStream {
         template.setChannelId(channelId.toString());
         template.setChunkId(counter);
         template.setFillBufferChunk(false);
-        System.out.println("Asking for chunk: "+template.getConcattedChunkId());
+        logger.info("Asking for chunk: {}", template.getConcattedChunkId());
         
         ChunkHolder result = gigaSpace.take(template);
         if (result == null) {
@@ -130,13 +134,13 @@ public class RemotingInputStream extends BufferedInputStream {
         }
         
         if (result == null || Boolean.TRUE.equals(result.getClosingChunk())) {
-            System.out.println("Read closing chunk, returning EOF.");
+        	logger.info("Read closing chunk, returning EOF.");
             return -1;
         } else {
             if (counter != result.getChunkId()) {
-                System.err.println("Found chunk out of order: "+result.getConcattedChunkId());
+            	logger.info("Found chunk out of order: "+result.getConcattedChunkId());
             } else {
-                System.out.println("Returning data for chunk: "+result.getConcattedChunkId());
+            	logger.info("Returning data for chunk: "+result.getConcattedChunkId());
             }
             
             byte[] data = result.getDataChunk();

@@ -7,8 +7,8 @@ import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 
 /**
+ * Holds a piece of data that needs transporting to or from a remote location.s
  * @author bwijsmuller
- *
  */
 @SpaceClass(fifoSupport=FifoSupport.ALL)
 public class ChunkHolder implements Serializable {
@@ -121,8 +121,6 @@ public class ChunkHolder implements Serializable {
         return closingChunk;
     }
 
-    //================== helpers ======================//
-    
     /**
      * Sets the fillBufferChunk
      * @param fillBufferChunk the fillBufferChunk to set
@@ -139,6 +137,8 @@ public class ChunkHolder implements Serializable {
         return fillBufferChunk;
     }
 
+    //=============== helper methods ===================//
+    
     private void splitConcat(String concattedChunkId) {
         String[] split = concattedChunkId.split(SPLIT_CHAR);
         this.channelId = split[0];

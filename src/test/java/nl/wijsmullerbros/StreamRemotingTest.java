@@ -22,6 +22,7 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.events.polling.PollingEventContainerServiceDetails;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.FileCopyUtils;
 
@@ -47,7 +48,7 @@ public class StreamRemotingTest {
 
         GigaSpace space = (GigaSpace) contextA.getBean("testGigaSpace");
         
-        FileSystemResource inputFile = new FileSystemResource("/home/bwijsmuller/Documents/Braam Wijsmuller-ScrumAlliance_CSM_Certificate.pdf");
+        ClassPathResource inputFile = new ClassPathResource("test-text.txt");
         assertTrue(inputFile.exists());
         InputStream inputStream = new BufferedInputStream(inputFile.getInputStream());
         ByteArrayOutputStream checkStream = new ByteArrayOutputStream();

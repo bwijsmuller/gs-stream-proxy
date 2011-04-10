@@ -4,7 +4,7 @@
 #
 export NIC_ADDR=localhost
 #
-# please configure the remote ip to connect to (can be localhost or some IP)
+# please configure the remote ip to read from / write to (can be localhost or some IP)
 #
 export REMOTE_HOST=localhost
 #
@@ -25,7 +25,7 @@ pushd ./target
 cp -v $LICENSE ./lib/
 
 # start command line testing application
-java $OPTS -jar gs-stream-test-0.0.1-SNAPSHOT.jar
+java $OPTS -jar gs-stream-test-0.0.2-SNAPSHOT.jar
 
 # return to folder
 popd

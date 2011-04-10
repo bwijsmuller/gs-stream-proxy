@@ -47,11 +47,12 @@ public class RemoteStreamRemotingTest {
     
     @Test
     public void testStreaming() throws Exception {
-        //TODO: make the result location platform independent
-        FileSystemResource testFile = new FileSystemResource("/tmp/streamOuputTest.dat");
+    	String tmpDirLoc = System.getProperty("java.io.tmpdir");
+        FileSystemResource testFile = new FileSystemResource(tmpDirLoc+"/streamOuputTest.dat");
         if (testFile.exists()) {
             testFile.getFile().delete();
         }
+        final String testFilePath = testFile.getPath();
         
         ClassPathXmlApplicationContext contextA = new ClassPathXmlApplicationContext("classpath:context-a.xml");
         contextA.registerShutdownHook();
@@ -81,7 +82,7 @@ public class RemoteStreamRemotingTest {
             Thread.sleep(1000);
         }
         
-        FileSystemResource fileSystemResource = new FileSystemResource("/tmp/streamOuputTest.dat");
+        FileSystemResource fileSystemResource = new FileSystemResource(testFilePath);
         assertTrue(fileSystemResource.exists());
         
         checkListenersClosed();

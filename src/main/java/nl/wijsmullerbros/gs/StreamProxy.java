@@ -9,8 +9,10 @@ import nl.wijsmullerbros.gs.outputstream.RemotingOutputStream;
 import org.openspaces.core.space.UrlSpaceConfigurer;
 
 /**
+ * The proxy travels over the (l)RMI call and holds the configuration
+ * needed to create the streams to write to or read from.
+ *  
  * @author bwijsmuller
- *
  */
 public class StreamProxy implements Serializable {
 

@@ -14,7 +14,7 @@ export REMOTE_HOST=localhost
 # configure the location where you store your gigaspaces license
 # (trial license or open source can usually be found in the gigaspaces application folder)
 # 
-LICENSE="/somedirectory/gslicense.xml"
+LICENSE="../src/test/resources/gslicense.xml"
 
 #==========================================================================#
 

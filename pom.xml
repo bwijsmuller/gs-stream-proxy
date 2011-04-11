@@ -77,7 +77,7 @@
 			<plugin>
 				<groupId>com.googlecode.maven-gcu-plugin</groupId>
 				<artifactId>maven-gcu-plugin</artifactId>
-				<version>1.0</version>
+				<version>1.1</version>
 				<executions>
 					<execution>
 						<id>gcode-upload</id>
@@ -87,12 +87,12 @@
 						</goals>
 						<configuration>
 							<serverId>googlecode</serverId> <!-- default: googlecode -->
-							<failsOnError>true</failsOnError> <!-- default: false -->
-							<projectName>gs-stream-proxy</projectName> <!-- default: ${project.artifactId} -->
+							<failsOnError>false</failsOnError> <!-- default: false -->
+							<projectName>${project.artifactId}</projectName> <!-- default: ${project.artifactId} -->
 							<uploads>
 								<upload>
 									<file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file>
-									<summary>${project.name} sources bundle ${project.version}</summary>
+									<summary>${project.name} bundle ${project.version}</summary>
 									<labels>
 										<label>Featured</label>
 										<label>Type-Archive</label>
@@ -142,11 +142,4 @@
 		
 	</dependencies>
 	
-<!-- 	<pluginRepositories> -->
-<!-- 	    <pluginRepository> -->
-<!-- 	        <id>repository.riedelcastro.org</id> -->
-<!-- 	        <url>http://repository.riedelcastro.org</url> -->
-<!-- 	    </pluginRepository> -->
-<!-- 	</pluginRepositories> -->
-
 </project>

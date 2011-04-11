@@ -3,7 +3,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.wijsmullerbros</groupId>
-	<artifactId>gs-stream-test</artifactId>
+	<artifactId>gs-stream-proxy</artifactId>
 	<version>0.2</version>
 	<packaging>jar</packaging>
 	<name>GS Stream Proxy</name>
@@ -75,21 +75,33 @@
 			</plugin>
 			
 			<plugin>
-			    <groupId>org.riedelcastro</groupId>
-			    <artifactId>gcupload-maven-plugin</artifactId>
-			    <version>1.0</version>
-			    <configuration>
-			        <uploads>
-			            <upload>
-			                <extension>jar</extension>
-			            </upload>
-			            <upload>
-			                <postfix>src</postfix>
-			                <extensions>tar.gz,zip</extensions>
-			                <labels>Type-Source,Featured</labels>
-			            </upload>
-			        </uploads>
-			    </configuration>
+				<groupId>com.googlecode.maven-gcu-plugin</groupId>
+				<artifactId>maven-gcu-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<id>gcode-upload</id>
+						<phase>install</phase> <!-- default: deploy -->
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<configuration>
+							<serverId>googlecode</serverId> <!-- default: googlecode -->
+							<failsOnError>true</failsOnError> <!-- default: false -->
+							<projectName>gs-stream-proxy</projectName> <!-- default: ${project.artifactId} -->
+							<uploads>
+								<upload>
+									<file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file>
+									<summary>${project.name} sources bundle ${project.version}</summary>
+									<labels>
+										<label>Featured</label>
+										<label>Type-Archive</label>
+									</labels>
+								</upload>
+							</uploads>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -129,5 +141,12 @@
 		</dependency>
 		
 	</dependencies>
+	
+<!-- 	<pluginRepositories> -->
+<!-- 	    <pluginRepository> -->
+<!-- 	        <id>repository.riedelcastro.org</id> -->
+<!-- 	        <url>http://repository.riedelcastro.org</url> -->
+<!-- 	    </pluginRepository> -->
+<!-- 	</pluginRepositories> -->
 
 </project>

@@ -15,12 +15,14 @@ import org.slf4j.LoggerFactory;
 import com.j_spaces.core.client.SpaceURL;
 
 /**
+ * Factory to create a proxy instance to send to the client.
+ * Also sets up any server side components that need to run before streaming.
+ * 
  * @author bwijsmuller
- *
  */
 public class StreamProxyFactory {
 
-	Logger logger = LoggerFactory.getLogger(StreamProxyFactory.class);
+	private static Logger logger = LoggerFactory.getLogger(StreamProxyFactory.class);
 	
     /**
      * Creates a new {@code StreamProxyFactory}.

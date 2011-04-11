@@ -22,7 +22,7 @@ import com.j_spaces.core.IJSpace;
  */
 public class RemotingOutputStream extends BufferedOutputStream {
 
-	Logger logger = LoggerFactory.getLogger(RemotingInputStream.class);
+	private static Logger logger = LoggerFactory.getLogger(RemotingInputStream.class);
 	
     private final UUID channelId;
     private final GigaSpace space;

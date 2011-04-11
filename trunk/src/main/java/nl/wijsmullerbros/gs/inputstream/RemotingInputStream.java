@@ -21,7 +21,7 @@ import com.j_spaces.core.IJSpace;
  */
 public class RemotingInputStream extends BufferedInputStream {
 
-	Logger logger = LoggerFactory.getLogger(RemotingInputStream.class);
+	private static Logger logger = LoggerFactory.getLogger(RemotingInputStream.class);
 	
     private final GigaSpace gigaSpace;
     private long counter;

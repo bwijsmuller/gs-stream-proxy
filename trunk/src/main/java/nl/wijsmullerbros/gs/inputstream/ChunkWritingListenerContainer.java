@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.UUID;
 
 import nl.wijsmullerbros.gs.ChunkHolder;
-import nl.wijsmullerbros.gs.StreamProxyFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.openspaces.core.GigaSpace;
@@ -29,7 +28,7 @@ import com.j_spaces.core.client.SQLQuery;
  */
 public class ChunkWritingListenerContainer {
 
-	Logger logger = LoggerFactory.getLogger(ChunkWritingListenerContainer.class);
+	private static Logger logger = LoggerFactory.getLogger(ChunkWritingListenerContainer.class);
 	
     private static final int READ_BUFFERSIZE = 1024;
     

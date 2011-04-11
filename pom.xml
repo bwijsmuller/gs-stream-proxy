@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.wijsmullerbros</groupId>
 	<artifactId>gs-stream-test</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.2</version>
 	<packaging>jar</packaging>
 	<name>GS Stream Proxy</name>
 
@@ -72,6 +72,24 @@
 						</manifestEntries>
 					</archive>
 				</configuration>
+			</plugin>
+			
+			<plugin>
+			    <groupId>org.riedelcastro</groupId>
+			    <artifactId>gcupload-maven-plugin</artifactId>
+			    <version>1.0</version>
+			    <configuration>
+			        <uploads>
+			            <upload>
+			                <extension>jar</extension>
+			            </upload>
+			            <upload>
+			                <postfix>src</postfix>
+			                <extensions>tar.gz,zip</extensions>
+			                <labels>Type-Source,Featured</labels>
+			            </upload>
+			        </uploads>
+			    </configuration>
 			</plugin>
 		</plugins>
 	</build>

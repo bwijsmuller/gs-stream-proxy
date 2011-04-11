@@ -25,7 +25,7 @@ pushd ./target
 cp -v $LICENSE ./lib/
 
 # start command line testing application
-java $OPTS -jar gs-stream-test-0.0.2-SNAPSHOT.jar
+java $OPTS -jar gs-stream-proxy-0.2.jar
 
 # return to folder
 popd

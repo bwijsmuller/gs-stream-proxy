@@ -10,4 +10,6 @@ The basics:
 - using the proxy the client starts sending data
 - the GigaSpace receives the data packets and starts forwarding them to the final destination
 
+It also includes a simple demo to send files using the command line to another machine running the application.
+
 Automatically exported from code.google.com/p/gs-stream-proxy
